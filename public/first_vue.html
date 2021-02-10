@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- axiosに関しての記述 -->
+
+    <title>Snippet App</title>
+  </head>
+  <body>
+    <div id="app"> <!-- 説明 2.1 -->
+      <p>{{ message }}</p> <!-- 説明 2.2 -->
+      <p>{{ message2 }}</p> <!-- 説明 2.2 -->
+      <button @click="changeMsg">Change</button>
+      <ul>
+        <li v-for="data in list">{{ data.title }}</li>
+      </ul>
+      <button @click="listSnippet">listSnippet</button>
+      <div>
+        <input v-model="title" placeholder="title"> <!-- 説明 2.23 -->
+        <input v-model="language" placeholder="language">
+        <input v-model="contents" placeholder="contents">
+      </div>
+      <button @click="postSnippet">postSnippet</button>
+    </div>
+
+    <script>
+      new Vue({
+        el: "#app",
+        data() {
+          return {
+            message: "Hello Vue!",
+            message2: "Hoge",
+            list: [{title:'title1'}, {title:'title2'}],
+            title: 'new title',
+            language: 'Ruby',
+            contents: 'contents'
+          }
+        },
+        mounted () {
+          this.setMsg();
+        },
+        methods: {
+          setMsg: function () {
+            this.message = 'Set Message';
+          },
+          changeMsg: function () {
+            this.message = 'Changed Message'
+            axios.get('/snippets.json')
+              .then(response => (
+                this.message2 = response.data[0]['language']
+              )
+            );
+          },
+          listSnippet: function () {
+            axios.get('/snippets.json')
+              .then(response => (
+                this.list = response.data
+              )
+            );
+          },
+          postSnippet: function () { 
+            axipos.post('/snippets.json', {title: 'new title', language: 'Ruby', contents: 'contents'})
+              .then(response => (
+                this.listSnippent()
+              )
+            );
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
